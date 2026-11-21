@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Middle C">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#111113">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAB9UlEQVR4Xu3dQU6DQBiA0cF4AWhv4fm9VcMZXGC6EbRfiomJ763hb2ZKvmHH9L68DdjzYls44uHAw0GnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMqBctApB8pBpxwoB51yoBx0yoFy0CkHykGnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMrBoWmeL7aHXcqBdw465UA56F63W9b19vi9y3J9/OIf5587bdf9J357md/s5LnLPHfa0aY5VnCs0CkHykGnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMqBctApB8pBpxwoB51yoBx0yoFy0CkHykGnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMqBctApB8pBpxwoB51yoBx0yoFy0CkHykGnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMqBctApB8pBpxwoB51yoBx0yoFy0CkHh6Z5vowx1vX25CYty3Wb8PyoMf7utH+yzO0vUA68c9ApB8pBpxwoB51yoBx0yoFy0CkHykGnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMqBctApB8pBpxwoB51yoBx0yoFy0CkHykGnHCgHnXKgHHTKgXLQKQfKQaccKAedcqAcdMqBctB9fsYLvnKs4FihUw6Ug045UA66DzGiLPgh8vs2AAAAAElFTkSuQmCC">
+<title>Middle C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Young+Serif&display=swap">
+<style>
+/* VOICE: a patient teacher; calm, encouraging, never busy
+   IDEA: the music desk of a piano: a method-book page above, the keys below, the red felt strip between
+   PICTURE: a grand staff that fills the page plus a real keyboard docked at the bottom
+   COLOUR and TYPE: lacquer black, white, felt red; Young Serif titles, Figtree text
+   LAYOUT: header, tabs, one big working card; keyboard fixed at the bottom on every screen */
+@font-face{font-family:"MC Clefs";src:url(data:font/ttf;base64,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) format("truetype")}
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#141417);--ink:light-dark(#141417,#ecebe8);--soft:light-dark(#6b6a70,#a3a2a8);--line:light-dark(#e4e3e6,#2c2c33);--card:light-dark(#ffffff,#1b1b20);--felt:#b5122b;--feltSoft:light-dark(#fbe3e6,#3a1219);--ok:#23955a;--miss:#e0761c;--heard:#2a6fd8;--kbh:clamp(110px,20vh,180px)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,-apple-system,sans-serif;overflow-x:clip;padding-bottom:calc(var(--kbh) + 34px + env(safe-area-inset-bottom));-webkit-user-select:none;user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--heard);outline-offset:2px}
+.top{background:#111113;color:#f4f3f0;padding:calc(12px + env(safe-area-inset-top)) max(4vw,16px) 12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:5px solid var(--felt)}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand b{font:400 26px/1 "Young Serif",Georgia,serif}
+.brand span{color:#a9a8ad;font-size:14px}
+.mic{display:flex;align-items:center;gap:12px}
+#micBtn{min-height:44px;padding:0 18px;border-radius:999px;border:0;background:var(--felt);color:#fff;font-weight:700;display:flex;align-items:center;gap:8px}
+#micBtn::before{content:"";width:10px;height:10px;border-radius:50%;background:#fff;opacity:.55}
+#micBtn.on{background:#2a2a30}
+#micBtn.on::before{background:#3be37f;opacity:1;box-shadow:0 0 0 4px rgba(59,227,127,.2)}
+.meter{width:90px;height:8px;border-radius:4px;background:#2a2a30;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3be37f,#f2c94c 70%,#ff5b5b);transition:width .06s}
+.msg{margin:12px max(4vw,16px) 0;padding:12px 16px;border-radius:12px;background:var(--feltSoft);color:var(--ink);font-size:15px}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px max(4vw,16px) 0;max-width:1240px;margin:0 auto}
+.tabs{display:flex;background:var(--line);border-radius:12px;padding:4px;gap:4px}
+.tabs button{border:0;background:none;min-height:40px;padding:0 16px;border-radius:9px;font-weight:600;color:var(--soft)}
+.tabs button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+details.set{margin-left:auto;position:relative}
+details.set summary{list-style:none;min-height:44px;display:flex;align-items:center;padding:0 14px;border:1px solid var(--line);border-radius:12px;font-weight:600;cursor:pointer}
+details.set summary::-webkit-details-marker{display:none}
+.setp{position:absolute;right:0;top:52px;z-index:20;width:min(320px,90vw);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 12px 32px rgba(0,0,0,.18);display:grid;gap:14px}
+.setp label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px}
+.setp small{color:var(--soft);display:block;font-size:13px}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--felt)}
+input[type=range]{width:100%;accent-color:var(--felt)}
+main{max-width:1240px;margin:0 auto;padding:14px max(4vw,16px)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1*max(4vw,16px)) 14px;padding:0 max(4vw,16px)}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 14px;text-align:left;min-height:44px}
+.chip b{display:block;font-size:15px}
+.chip span{font-size:13px;color:var(--soft)}
+.chip[aria-pressed=true]{border-color:var(--felt);box-shadow:inset 0 0 0 1px var(--felt)}
+.chip em{font-style:normal;color:var(--ok);font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,2.4vw,28px);position:relative}
+.head{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.head h2{font:400 clamp(26px,3.4vw,38px)/1.05 "Young Serif",Georgia,serif;margin:0}
+.head p{margin:4px 0 0;color:var(--soft)}
+.acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:600}
+.btn.pri{background:var(--felt);border-color:var(--felt);color:#fff}
+.btn:disabled{opacity:.45}
+.play{display:grid;grid-template-columns:minmax(150px,220px) minmax(0,1fr);gap:clamp(12px,2vw,28px);align-items:center;margin-top:10px}
+.prompt{text-align:center}
+.prompt small{display:block;color:var(--soft);font-size:14px}
+.big{font:400 clamp(72px,11vw,120px)/1 "Young Serif",Georgia,serif;color:var(--felt);display:block;margin:4px 0}
+.prompt .sub{font-weight:600}
+.fig{position:relative;min-height:210px;color:var(--ink)}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ln{stroke:currentColor;stroke-width:1.2;opacity:.55}
+.stem{stroke-width:1.6}
+.clef{font-family:"MC Clefs","Noto Music","Apple Symbols","Segoe UI Symbol",serif;fill:currentColor}
+.nt{fill:currentColor;stroke:currentColor}
+.nt ellipse,.nt .acc{stroke:none}
+.nt.done{opacity:.3}
+.nt.current{fill:var(--felt);stroke:var(--felt)}
+.fing{font-size:13px;font-weight:700;fill:var(--soft);stroke:none}
+.nt.current .fing{fill:var(--felt)}
+.prog{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:16px}
+.prog i{display:block;height:100%;width:0;background:var(--felt);transition:width .25s}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;color:var(--soft);font-size:15px}
+.fb{font-weight:600;color:var(--ink);min-height:1.5em}
+.done{position:absolute;inset:0;border-radius:18px;background:color-mix(in srgb,var(--card) 94%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:8px;z-index:5}
+.done[hidden]{display:none}
+.done h3{font:400 clamp(30px,4vw,44px)/1.05 "Young Serif",Georgia,serif;margin:0}
+.done p{margin:0 0 8px;color:var(--soft);font-size:17px}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.readout{text-align:center}
+.readout .big{color:var(--ink)}
+.hz{color:var(--soft);font-variant-numeric:tabular-nums}
+.tune{position:relative;height:36px;margin:12px auto 0;max-width:220px}
+.tune::before{content:"";position:absolute;left:0;right:0;top:17px;height:2px;background:var(--line)}
+.tune b{position:absolute;left:50%;top:6px;width:2px;height:24px;background:var(--soft)}
+.tune i{position:absolute;top:4px;width:6px;height:28px;margin-left:-3px;border-radius:3px;background:var(--heard);left:50%;transition:left .1s}
+.tune span{position:absolute;top:20px;font-size:12px;color:var(--soft)}
+.qopts{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+select{font:inherit;font-size:16px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 12px}
+.stats{display:flex;gap:clamp(12px,3vw,32px);flex-wrap:wrap;margin-top:16px}
+.stats div{font-size:14px;color:var(--soft)}
+.stats b{display:block;font:400 28px/1.1 "Young Serif",Georgia,serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.help{color:var(--soft);font-size:15px;max-width:70ch;margin:16px 0 0}
+/* keyboard */
+.kbd{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#111113;border-top:6px solid var(--felt);padding:0 0 env(safe-area-inset-bottom)}
+.kwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.kwrap::-webkit-scrollbar{display:none}
+.keys{position:relative;display:flex;height:var(--kbh);max-width:1240px;margin:0 auto;padding:0 4px 4px;touch-action:none}
+.wk{flex:1;background:linear-gradient(#f2f2f2,#fff 18%);border:1px solid #1b1b1d;border-top:0;border-radius:0 0 7px 7px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:10px;font:600 14px/1 Figtree,sans-serif;color:#8b8a90;transition:background .08s}
+.wk sub{font-size:10px}
+.wk .dot{width:8px;height:8px;border-radius:50%;background:var(--felt);margin-bottom:8px}
+.noletters .wk span{visibility:hidden}
+.bk{position:absolute;top:0;height:60%;background:linear-gradient(#3a3a3e,#0b0b0c 70%);border-radius:0 0 5px 5px;z-index:2;box-shadow:0 3px 4px rgba(0,0,0,.5);transition:background .08s}
+.wk.target{background:linear-gradient(#fbe3e6,#f7c3ca);color:var(--felt);box-shadow:inset 0 -6px 0 var(--felt)}
+.bk.target{background:linear-gradient(#e0475d,var(--felt))}
+.wk.heard{background:linear-gradient(#e2ecfb,#c7dbf7)}
+.bk.heard{background:linear-gradient(#5b8fe0,var(--heard))}
+.wk.hit,.wk.target.hit{background:#c9efd8;box-shadow:inset 0 -6px 0 var(--ok)}
+.bk.hit{background:var(--ok)}
+.wk.miss{background:#fde3cb;box-shadow:inset 0 -6px 0 var(--miss)}
+.bk.miss{background:var(--miss)}
+.wk.press{background:#e6e6e6}.bk.press{background:#555}
+@media(max-width:720px){.keys{min-width:820px}.play{grid-template-columns:minmax(0,1fr)}.big{font-size:72px}.meter{width:60px}.brand span{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg width="34" height="28" viewBox="0 0 34 28" aria-hidden="true"><rect x="1" y="1" width="32" height="26" rx="4" fill="#fff"/><rect x="1" y="1" width="32" height="4" fill="#b5122b"/><path d="M9.5 5v22M17 5v22M24.5 5v22" stroke="#111" stroke-width="1"/><rect x="7" y="5" width="5" height="12" rx="1" fill="#111"/><rect x="22" y="5" width="5" height="12" rx="1" fill="#111"/></svg>
+    <b>Middle C</b><span>piano practice</span>
+  </div>
+  <div class="mic">
+    <div class="meter" aria-hidden="true"><i id="lvl"></i></div>
+    <button id="micBtn" type="button">Start listening</button>
+  </div>
+</header>
+<div id="micMsg" class="msg" role="status" hidden></div>
+
+<div class="bar">
+  <div class="tabs" role="tablist">
+    <button data-tab="lesson" role="tab">Lessons</button>
+    <button data-tab="free" role="tab">Free play</button>
+    <button data-tab="quiz" role="tab">Note reading</button>
+  </div>
+  <details class="set">
+    <summary>Settings</summary>
+    <div class="setp">
+      <div><label for="sens">Mic sensitivity <span id="sensV"></span></label><input id="sens" type="range" min="1" max="10" step="1"><small>Turn it up if quiet notes are missed, down if the room's noise sets it off.</small></div>
+      <label>Any octave counts <input id="anyOct" type="checkbox"></label>
+      <label>Light up the next key <input id="hints" type="checkbox"></label>
+      <label>Letter names on keys <input id="letters" type="checkbox"></label>
+    </div>
+  </details>
+</div>
+
+<main>
+  <section id="tab-lesson">
+    <div class="chips" id="chips"></div>
+    <div class="card">
+      <div class="head">
+        <div><h2 id="lsTitle"></h2><p id="lsMeta"></p></div>
+        <div class="acts">
+          <button class="btn" id="lsListen" type="button">Hear the song</button>
+          <button class="btn" id="lsHear" type="button">Hear this note</button>
+          <button class="btn" id="lsRestart" type="button">Restart</button>
+        </div>
+      </div>
+      <div class="play">
+        <div class="prompt"><small>Play</small><span class="big" id="lsNote"></span><span class="sub" id="lsFinger"></span><small id="lsOct"></small></div>
+        <div class="fig"><svg id="lsStaff" aria-label="Song on the staff"></svg></div>
+      </div>
+      <div class="prog"><i id="lsBar"></i></div>
+      <div class="foot"><span class="fb" id="lsFb" aria-live="polite"></span><span id="lsCount"></span></div>
+      <div class="done" id="lsDone" hidden>
+        <h3 id="dnTitle"></h3><p id="dnStats"></p>
+        <div class="row"><button class="btn" id="dnAgain" type="button">Play it again</button><button class="btn pri" id="dnNext" type="button">Next song</button></div>
+      </div>
+    </div>
+    <p class="help">Tap <b>Start listening</b>, set the iPad on the music stand, and play the red note. The lesson waits for you, so go slowly. You can tap the keys below instead if you're away from the piano.</p>
+  </section>
+
+  <section id="tab-free" hidden>
+    <div class="card">
+      <div class="play">
+        <div class="readout">
+          <small class="hz">You're playing</small>
+          <span class="big" id="frNote">–</span>
+          <span class="hz" id="frHz">Play any key</span>
+          <div class="tune" aria-hidden="true"><b></b><i id="frNeedle"></i><span style="left:0">flat</span><span style="right:0">sharp</span></div>
+        </div>
+        <div class="fig"><svg id="frStaff" aria-label="Notes you played"></svg></div>
+      </div>
+      <div class="foot"><span>Each note you play appears on the staff, so you can see where it's written.</span><button class="btn" id="frClear" type="button">Clear</button></div>
+    </div>
+  </section>
+
+  <section id="tab-quiz" hidden>
+    <div class="card">
+      <div class="head">
+        <div><h2>Find this note</h2><p>Read the note on the staff, then play it.</p></div>
+        <div class="acts qopts">
+          <select id="qRange" aria-label="Note range"><option value="treble">Treble: C4–G5</option><option value="bass">Bass: C3–B3</option><option value="both">Both staves</option></select>
+          <label style="display:flex;gap:8px;align-items:center"><input id="qNat" type="checkbox"> White keys only</label>
+          <button class="btn" id="qSkip" type="button">Skip</button>
+        </div>
+      </div>
+      <div class="fig" style="min-height:260px;margin-top:12px"><svg id="qStaff" aria-label="Note to find"></svg></div>
+      <div class="foot"><span class="fb" id="qFb" aria-live="polite"></span></div>
+      <div class="stats">
+        <div><b id="qFirst">0/0</b>right first try</div>
+        <div><b id="qStreak">0</b>streak</div>
+        <div><b id="qBest">0</b>best streak</div>
+        <div><b id="qAvg">–</b>avg time</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="kbd"><div class="kwrap" id="kwrap"><div class="keys" id="keys"></div></div></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const NAMES=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const LET=[0,0,1,1,2,3,3,4,4,5,5,6], SH=[0,1,0,1,0,0,1,0,1,0,1,0];
+const nm=m=>NAMES[m%12], oct=m=>Math.floor(m/12)-1, full=m=>nm(m)+oct(m);
+const parse=s=>{const L={C:0,D:2,E:4,F:5,G:7,A:9,B:11};return s.trim().split(/\s+/).map(t=>{const sh=t[1]==='#'?1:0;return (+t.slice(1+sh)+1)*12+L[t[0]]+sh;});};
+const describe=m=>m===60?'middle C':`${full(m)} · ${m>60?'above':'below'} middle C`;
+
+const SONGS=[
+ {id:'cpos',title:'Five-finger C',level:'Start here',hand:'Right hand, thumb on middle C',notes:'C4 D4 E4 F4 G4 G4 F4 E4 D4 C4'},
+ {id:'hcb',title:'Hot Cross Buns',level:'Beginner',notes:'E4 D4 C4 E4 D4 C4 C4 C4 C4 C4 D4 D4 D4 D4 E4 D4 C4'},
+ {id:'mary',title:'Mary Had a Little Lamb',level:'Beginner',notes:'E4 D4 C4 D4 E4 E4 E4 D4 D4 D4 E4 G4 G4 E4 D4 C4 D4 E4 E4 E4 E4 D4 D4 E4 D4 C4'},
+ {id:'ode',title:'Ode to Joy',level:'Beginner',notes:'E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 E4 D4 D4 E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 D4 C4 C4'},
+ {id:'twinkle',title:'Twinkle, Twinkle',level:'Beginner',hand:'Stretch your pinky to A',notes:'C4 C4 G4 G4 A4 A4 G4 F4 F4 E4 E4 D4 D4 C4 G4 G4 F4 F4 E4 E4 D4 G4 G4 F4 F4 E4 E4 D4 C4 C4 G4 G4 A4 A4 G4 F4 F4 E4 E4 D4 D4 C4'},
+ {id:'jingle',title:'Jingle Bells',level:'Easy',notes:'E4 E4 E4 E4 E4 E4 E4 G4 C4 D4 E4 F4 F4 F4 F4 F4 E4 E4 E4 E4 D4 D4 E4 D4 G4'},
+ {id:'scale',title:'C major scale',level:'Technique',hand:'Tuck your thumb under after E',notes:'C4 D4 E4 F4 G4 A4 B4 C5 B4 A4 G4 F4 E4 D4 C4',fingers:'1 2 3 1 2 3 4 5 4 3 2 1 3 2 1'},
+ {id:'left',title:'Left-hand C',level:'Left hand',hand:'Pinky on the C below middle C',notes:'C3 D3 E3 F3 G3 G3 F3 E3 D3 C3',fingers:'5 4 3 2 1 1 2 3 4 5'}
+];
+
+const store={get(k,d){try{const v=localStorage.getItem('mc.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('mc.'+k,JSON.stringify(v))}catch(e){}}};
+const S=Object.assign({sens:6,anyOct:true,hints:true,letters:true},store.get('settings',{}));
+const best=store.get('best',{});
+
+/* ---------- sound ---------- */
+let ctx=null, muteUntil=0;
+function ensureCtx(){if(!ctx){const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC();}if(ctx.state!=='running')ctx.resume().catch(()=>{});return ctx;}
+function playNote(m,when,dur){when=when||0;dur=dur||1.1;const c=ensureCtx();const t=c.currentTime+0.03+when;const f=440*2**((m-69)/12);
+  const out=c.createGain();out.gain.setValueAtTime(0.0001,t);out.gain.exponentialRampToValueAtTime(0.3,t+0.008);out.gain.exponentialRampToValueAtTime(0.0001,t+dur);out.connect(c.destination);
+  [[1,1],[2,.42],[3,.18],[4,.09],[5,.04]].forEach(([h,a])=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f*h;g.gain.value=a;o.connect(g);g.connect(out);o.start(t);o.stop(t+dur+0.05);});
+  const end=performance.now()+(when+dur)*1000+250;if(end>muteUntil)muteUntil=end;}
+
+/* ---------- pitch detection (McLeod normalized square difference) ---------- */
+/*DETECT_START*/
+function detectPitch(buf,sr){
+  const N=buf.length;let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/N);
+  const maxLag=Math.min(Math.floor(sr/55),N>>1);const nsdf=new Float32Array(maxLag+2);
+  for(let t=0;t<=maxLag+1;t++){let ac=0,m=0;for(let j=0,e=N-t;j<e;j++){const a=buf[j],b=buf[j+t];ac+=a*b;m+=a*a+b*b;}nsdf[t]=m>0?2*ac/m:0;}
+  let t=1;while(t<maxLag&&nsdf[t]>0)t++;
+  const peaks=[];let bv=-1,bt=0;
+  for(;t<=maxLag;t++){if(nsdf[t]>0){if(nsdf[t]>bv){bv=nsdf[t];bt=t;}}else if(bv>0){peaks.push([bt,bv]);bv=-1;}}
+  if(bv>0)peaks.push([bt,bv]);
+  if(!peaks.length)return{freq:0,clarity:0,rms};
+  let mx=0;for(const p of peaks)if(p[1]>mx)mx=p[1];
+  const pk=peaks.find(p=>p[1]>=0.86*mx);const T=pk[0];
+  const a=nsdf[T-1],b=nsdf[T],c=nsdf[T+1],d=a-2*b+c,sh=d?0.5*(a-c)/d:0;
+  return{freq:sr/(T+sh),clarity:b,rms};
+}
+/*DETECT_END*/
+
+/* ---------- microphone ---------- */
+let stream=null,analyser=null,buf=null,listening=false,lastProc=0;
+let hist=[],rmsHist=[],stable=null,fresh=true,lastOnset=0;
+const micBtn=$('#micBtn'),lvl=$('#lvl');
+const showMsg=t=>{const e=$('#micMsg');e.textContent=t;e.hidden=false;}, hideMsg=()=>{$('#micMsg').hidden=true;};
+micBtn.addEventListener('click',()=>listening?stopMic():startMic());
+async function startMic(){
+  ensureCtx();
+  if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){showMsg('The microphone only works when this page is opened from an https:// web address. Until then, you can tap the keys at the bottom.');return;}
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});}
+  catch(e){showMsg(e.name==='NotAllowedError'?'Microphone access is blocked. On iPad, open Settings › Apps › Safari › Microphone, choose Allow, then reload this page.':'The microphone could not be opened ('+e.name+').');return;}
+  const src=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=2048;src.connect(analyser);buf=new Float32Array(analyser.fftSize);
+  listening=true;micBtn.classList.add('on');micBtn.textContent='Listening';hideMsg();requestAnimationFrame(tick);
+}
+function stopMic(){listening=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;micBtn.classList.remove('on');micBtn.textContent='Start listening';lvl.style.width='0';stable=null;setHeard(null);}
+function tick(now){if(!listening)return;if(now-lastProc>28){lastProc=now;processFrame(now);}requestAnimationFrame(tick);}
+const gate=()=>0.04*Math.pow(0.66,S.sens-1);
+function processFrame(now){
+  analyser.getFloatTimeDomainData(buf);
+  if(now<muteUntil){hist=[];stable=null;setHeard(null);lvl.style.width='0';return;}
+  const r=detectPitch(buf,ctx.sampleRate),g=gate();
+  lvl.style.width=Math.min(100,Math.sqrt(r.rms/0.25)*100)+'%';
+  const past=rmsHist.length?Math.min(...rmsHist.slice(-4)):0;
+  if(r.rms>g&&r.rms>past*1.8&&now-lastOnset>120){lastOnset=now;fresh=true;hist=[];stable=null;}
+  rmsHist.push(r.rms);if(rmsHist.length>8)rmsHist.shift();
+  let n=null,cents=0;
+  if(r.rms>g&&r.clarity>0.8&&r.freq>60&&r.freq<1500){const m=69+12*Math.log2(r.freq/440);n=Math.round(m);cents=(m-n)*100;if(n<36||n>96)n=null;}
+  hist.push(n);if(hist.length>3)hist.shift();
+  let s=stable;
+  if(hist.length===3&&hist[0]!==null&&hist.every(x=>x===hist[0]))s=hist[0];
+  else if(hist.length>=2&&hist.slice(-2).every(x=>x===null))s=null;
+  if(s!==stable){if(s!==null)fresh=true;stable=s;}
+  setHeard(stable);
+  if(tab==='free'&&stable!==null&&n===stable)setLive(n,cents,r.freq);
+  if(stable!==null&&fresh){fresh=false;onNote(stable);}
+}
+
+/* ---------- keyboard ---------- */
+const LO=48,HI=84,keysEl=$('#keys'),keyEl={};
+(function(){const wh=[];for(let m=LO;m<=HI;m++)if(!SH[m%12])wh.push(m);const W=wh.length;let h='';
+  wh.forEach(m=>{h+=`<div class="wk" data-m="${m}">${m===60?'<i class="dot"></i>':''}<span>${nm(m)}${m%12===0?'<sub>'+oct(m)+'</sub>':''}</span></div>`;});
+  for(let m=LO;m<=HI;m++)if(SH[m%12]){const wi=wh.indexOf(m+1);h+=`<div class="bk" data-m="${m}" style="left:calc(${(wi*100/W).toFixed(3)}% - ${(100/W*0.31).toFixed(3)}%);width:${(100/W*0.62).toFixed(3)}%"></div>`;}
+  keysEl.innerHTML=h;keysEl.querySelectorAll('[data-m]').forEach(k=>keyEl[k.dataset.m]=k);})();
+keysEl.addEventListener('pointerdown',e=>{const k=e.target.closest('[data-m]');if(!k)return;e.preventDefault();const m=+k.dataset.m;playNote(m,0,0.7);flash(m,'press',160);onNote(m);});
+function flash(m,c,ms){const k=keyEl[m];if(!k)return;k.classList.add(c);setTimeout(()=>k.classList.remove(c),ms);}
+let tgt=null,hrd=null;
+function setTarget(m){if(tgt!==null&&keyEl[tgt])keyEl[tgt].classList.remove('target');tgt=m;if(m!==null&&keyEl[m])keyEl[m].classList.add('target');}
+function setHeard(m){if(m===hrd)return;if(hrd!==null&&keyEl[hrd])keyEl[hrd].classList.remove('heard');hrd=m;if(m!==null&&keyEl[m])keyEl[m].classList.add('heard');}
+function centerKeys(){const w=$('#kwrap');if(w.scrollWidth>w.clientWidth){const k=keyEl[60];w.scrollLeft=k.offsetLeft-w.clientWidth/2+k.offsetWidth*2;}}
+
+/* ---------- staff ---------- */
+const ro=new ResizeObserver(es=>es.forEach(e=>drawStaff(e.target.querySelector('svg'))));
+function setStaff(svg,notes,opts){svg._d={notes,opts:opts||{}};drawStaff(svg);if(!svg._obs){svg._obs=1;ro.observe(svg.parentElement);}}
+function drawStaff(svg){
+  const D=svg&&svg._d;if(!D)return;const W=svg.clientWidth,H=svg.clientHeight;if(!W||!H)return;
+  const step=Math.min(H/34,9),gap=step*2,top=(H-32*step)/2,y=d=>top+(46-d)*step;
+  const x0=12+gap*3.4;let s='';
+  [30,32,34,36,38,18,20,22,24,26].forEach(d=>{s+=`<line class="ln" x1="6" x2="${W-6}" y1="${y(d)}" y2="${y(d)}"/>`;});
+  s+=`<line class="ln" x1="6" x2="6" y1="${y(38)}" y2="${y(18)}"/>`;
+  s+=`<text class="clef" x="12" y="${y(30)}" font-size="${gap*4}">𝄞</text><text class="clef" x="12" y="${y(18)}" font-size="${gap*4}">𝄢</text>`;
+  const notes=D.notes,sp=Math.max(gap*3.4,46),per=Math.max(1,Math.floor((W-x0-20)/sp));
+  let start=0;if(D.opts.cur!=null)start=Math.floor(D.opts.cur/per)*per;else if(notes.length>per)start=notes.length-per;
+  const vis=notes.slice(start,start+per);
+  const cx0=D.opts.center?(x0+W)/2-(vis.length-1)*sp/2:x0+sp*0.6;
+  vis.forEach((n,i)=>{
+    const m=n.m,d=oct(m)*7+LET[m%12],cx=cx0+i*sp,cy=y(d);
+    const led=[];if(d===28)led.push(28);for(let L=40;L<=d;L+=2)led.push(L);for(let L=16;L>=d;L-=2)led.push(L);
+    led.forEach(L=>{s+=`<line class="ln" x1="${cx-step*2.2}" x2="${cx+step*2.2}" y1="${y(L)}" y2="${y(L)}" style="opacity:.8"/>`;});
+    const up=d>=28?d<34:d<22,sx=up?cx+step*1.12:cx-step*1.12;
+    s+=`<g class="nt ${n.s||'todo'}">`;
+    if(SH[m%12])s+=`<text class="acc" x="${cx-step*3.6}" y="${cy+step*0.95}" font-size="${gap*1.5}">♯</text>`;
+    s+=`<ellipse cx="${cx}" cy="${cy}" rx="${step*1.28}" ry="${step*0.92}" transform="rotate(-20 ${cx} ${cy})"/>`;
+    s+=`<line class="stem" x1="${sx}" x2="${sx}" y1="${cy}" y2="${up?cy-gap*3.3:cy+gap*3.3}"/>`;
+    if(n.f)s+=`<text class="fing" x="${cx}" y="${y(44.6)}" text-anchor="middle">${n.f}</text>`;
+    s+='</g>';
+  });
+  svg.innerHTML=s;
+}
+
+/* ---------- lessons ---------- */
+let L=null;
+const FING={60:'1',62:'2',64:'3',65:'4',67:'5'};
+function renderChips(){$('#chips').innerHTML=SONGS.map(g=>`<button class="chip" type="button" data-song="${g.id}" aria-pressed="${L&&L.sg.id===g.id}"><b>${g.title}</b><span>${g.level}${best[g.id]?` · best <em>${best[g.id]}%</em>`:''}</span></button>`).join('');}
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-song]');if(b)startSong(b.dataset.song);});
+function startSong(id){const sg=SONGS.find(x=>x.id===id)||SONGS[0];const notes=parse(sg.notes);
+  const fingers=sg.fingers?sg.fingers.split(' '):notes.map(m=>FING[m]||'');
+  L={sg,notes,fingers,idx:0,bad:0,t0:0,done:false};store.set('song',sg.id);$('#lsFb').textContent='';renderChips();renderLesson();}
+function renderLesson(){
+  const{sg,notes,idx}=L;$('#lsTitle').textContent=sg.title;$('#lsMeta').textContent=[sg.level,sg.hand].filter(Boolean).join(' · ');
+  $('#lsDone').hidden=!L.done;
+  if(!L.done){const m=notes[idx];$('#lsNote').textContent=nm(m);$('#lsOct').textContent=describe(m);$('#lsFinger').textContent=L.fingers[idx]?'finger '+L.fingers[idx]:'';}
+  setStaff($('#lsStaff'),notes.map((n,i)=>({m:n,s:i<idx?'done':(i===idx&&!L.done?'current':'todo'),f:L.fingers[i]})),{cur:Math.min(idx,notes.length-1)});
+  $('#lsBar').style.width=(idx/notes.length*100)+'%';
+  $('#lsCount').textContent=`${idx} of ${notes.length} notes`+(L.bad?` · ${L.bad} slip${L.bad>1?'s':''}`:'');
+  setTarget(tab==='lesson'&&!L.done&&S.hints?notes[idx]:null);
+}
+function lessonNote(m){
+  if(!L||L.done)return;const t=L.notes[L.idx];if(!L.t0)L.t0=performance.now();
+  const ok=S.anyOct?m%12===t%12:m===t;
+  if(ok){flash(m,'hit',380);L.idx++;$('#lsFb').textContent='';if(L.idx>=L.notes.length)finishSong();}
+  else{flash(m,'miss',480);L.bad++;$('#lsFb').textContent=`Heard ${full(m)}, looking for ${full(t)}`;}
+  renderLesson();
+}
+function finishSong(){
+  L.done=true;const n=L.notes.length,acc=Math.round(n/(n+L.bad)*100),secs=Math.round((performance.now()-L.t0)/1000);
+  const prev=best[L.sg.id]||0,isBest=acc>prev;if(isBest){best[L.sg.id]=acc;store.set('best',best);}
+  $('#dnTitle').textContent=acc===100?'Perfect!':acc>=85?'Lovely playing':'You made it through';
+  $('#dnStats').textContent=`${n} notes · ${acc}% accuracy · ${secs}s`+(isBest&&prev?' · new best':prev&&!isBest?` · best ${prev}%`:'');
+  renderChips();
+}
+$('#lsRestart').addEventListener('click',()=>startSong(L.sg.id));
+$('#dnAgain').addEventListener('click',()=>startSong(L.sg.id));
+$('#dnNext').addEventListener('click',()=>{const i=SONGS.indexOf(L.sg);startSong(SONGS[(i+1)%SONGS.length].id);});
+$('#lsHear').addEventListener('click',()=>{if(L&&!L.done)playNote(L.notes[L.idx]);});
+$('#lsListen').addEventListener('click',e=>{const b=e.currentTarget;b.disabled=true;const beat=0.48;
+  L.notes.forEach((m,i)=>{playNote(m,i*beat,0.6);setTimeout(()=>flash(m,'press',beat*800),i*beat*1000+30);});
+  setTimeout(()=>{b.disabled=false;},L.notes.length*beat*1000+600);});
+
+/* ---------- free play ---------- */
+const F={trail:store.get('trail',[])};
+function freeRender(){setStaff($('#frStaff'),F.trail.map((m,i,a)=>({m,s:i===a.length-1?'current':'todo'})),{});}
+function setLive(n,cents,f){$('#frNote').innerHTML=`${nm(n)}<small style="font-size:.4em">${oct(n)}</small>`;$('#frHz').textContent=f?`${f.toFixed(1)} Hz · ${cents>=0?'+':''}${Math.round(cents)} cents`:describe(n);$('#frNeedle').style.left=(50+Math.max(-50,Math.min(50,cents)))+'%';}
+function freeNote(m){F.trail.push(m);if(F.trail.length>24)F.trail.shift();store.set('trail',F.trail);setLive(m,0,0);freeRender();}
+$('#frClear').addEventListener('click',()=>{F.trail=[];store.set('trail',[]);freeRender();});
+
+/* ---------- note reading ---------- */
+const Q={range:store.get('qrange','treble'),nat:store.get('qnat',true),target:null,tries:0,ok:0,total:0,streak:0,best:store.get('qbest',0),t0:0,times:[],lock:false};
+function qPool(){const r={treble:[60,79],bass:[48,59],both:[48,79]}[Q.range];const a=[];for(let m=r[0];m<=r[1];m++)if(!Q.nat||!SH[m%12])a.push(m);return a;}
+function qNext(){const p=qPool();let m;do{m=p[Math.floor(Math.random()*p.length)];}while(p.length>1&&m===Q.target);Q.target=m;Q.tries=0;Q.t0=performance.now();setTarget(null);$('#qFb').textContent='';qRender();}
+function qRender(){setStaff($('#qStaff'),[{m:Q.target,s:'current'}],{center:true});
+  $('#qFirst').textContent=`${Q.ok}/${Q.total}`;$('#qStreak').textContent=Q.streak;$('#qBest').textContent=Q.best;
+  $('#qAvg').textContent=Q.times.length?(Q.times.reduce((a,b)=>a+b,0)/Q.times.length/1000).toFixed(1)+'s':'–';}
+function quizNote(m){
+  if(Q.target==null||Q.lock)return;const t=Q.target,ok=S.anyOct?m%12===t%12:m===t;
+  if(ok){flash(m,'hit',420);Q.total++;if(Q.tries===0){Q.ok++;Q.streak++;if(Q.streak>Q.best){Q.best=Q.streak;store.set('qbest',Q.best);}}else Q.streak=0;
+    Q.times.push(performance.now()-Q.t0);$('#qFb').textContent=`Yes, that's ${full(t)}`;Q.lock=true;setTimeout(()=>{Q.lock=false;qNext();},750);}
+  else{flash(m,'miss',480);Q.tries++;Q.streak=0;
+    if(Q.tries>=2){setTarget(t);$('#qFb').textContent=`That was ${full(m)}. This note is ${full(t)}, lit up below.`;}
+    else $('#qFb').textContent=`That was ${full(m)}. Try again.`;}
+  qRender();
+}
+$('#qRange').value=Q.range;$('#qNat').checked=Q.nat;
+$('#qRange').addEventListener('change',e=>{Q.range=e.target.value;store.set('qrange',Q.range);qNext();});
+$('#qNat').addEventListener('change',e=>{Q.nat=e.target.checked;store.set('qnat',Q.nat);qNext();});
+$('#qSkip').addEventListener('click',()=>{Q.streak=0;qNext();});
+
+/* ---------- routing, settings ---------- */
+let tab=store.get('tab','lesson');
+function onNote(m){if(tab==='lesson')lessonNote(m);else if(tab==='quiz')quizNote(m);else freeNote(m);}
+function showTab(t){tab=t;store.set('tab',t);
+  document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
+  ['lesson','free','quiz'].forEach(x=>{$('#tab-'+x).hidden=x!==t;});
+  setTarget(null);
+  if(t==='lesson')renderLesson();else if(t==='quiz'){if(Q.target==null)qNext();else qRender();}else freeRender();}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function applySettings(){$('#sens').value=S.sens;$('#sensV').textContent=S.sens;$('#anyOct').checked=S.anyOct;$('#hints').checked=S.hints;$('#letters').checked=S.letters;keysEl.classList.toggle('noletters',!S.letters);}
+$('#sens').addEventListener('input',e=>{S.sens=+e.target.value;$('#sensV').textContent=S.sens;store.set('settings',S);});
+['anyOct','hints','letters'].forEach(k=>$('#'+k).addEventListener('change',e=>{S[k]=e.target.checked;store.set('settings',S);applySettings();if(tab==='lesson')renderLesson();}));
+document.addEventListener('pointerdown',e=>{const d=$('details.set');if(d.open&&!d.contains(e.target))d.open=false;});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening)stopMic();});
+
+applySettings();startSong(store.get('song','cpos'));showTab(tab);centerKeys();
+}
+</script>
+</body>
+</html>
