@@ -247,7 +247,7 @@ select{font:inherit;font-size:16px;min-height:44px;border-radius:12px;border:1px
   </section>
 </main>
 
-<input type="file" id="impFile" accept=".mxl,.musicxml,.xml,.mid,.midi,application/vnd.recordare.musicxml+xml,application/vnd.recordare.musicxml,audio/midi,audio/x-midi" hidden>
+<input type="file" id="impFile" hidden>
 <div class="ovl" id="impDlg" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="impH">
   <h3 id="impH">Add a song</h3>
   <p class="err" id="impErr" hidden></p>
@@ -579,7 +579,7 @@ async function readSongFile(file){
   if(b[0]===0x4d&&b[1]===0x54&&b[2]===0x68&&b[3]===0x64)res=parseMidi(b);
   else if(b[0]===0x50&&b[1]===0x4b)res=parseMusicXml(await unzipMxl(b));
   else if(/\.pdf$/i.test(file.name)||(b[0]===0x25&&b[1]===0x50))throw Error('PDFs can\'t be read by the app. Look for a MusicXML (.mxl / .musicxml) or MIDI (.mid) download instead.');
-  else res=parseMusicXml(new TextDecoder().decode(b));
+  else{const t=new TextDecoder().decode(b.subarray(0,4000));if(!/<score-(partwise|timewise)|<\?xml/i.test(t))throw Error('This file isn\'t MusicXML or MIDI. Choose a .mxl, .musicxml or .mid file.');res=parseMusicXml(new TextDecoder().decode(b));}
   res.sources=res.sources.filter(s=>s.notes.length);
   if(!res.sources.length)throw Error('No notes were found in this file.');
   const mel=res.sources.filter(s=>!s.drum);
