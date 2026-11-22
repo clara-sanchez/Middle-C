@@ -656,6 +656,35 @@ function parseMidi(b){
   return{tempo:tempo||100,flats,tsig,bars,lyrics:lyrics.length?[lyrics]:[],sources:[...srcs.values()].map(s=>({label:s.label,drum:s.drum,notes:s.notes.sort((a,c)=>a[0]-c[0])}))};
 }
 /* ---------- import: MusicXML ---------- */
+// Play order through the bars, following repeat signs, 1st/2nd endings, D.C./D.S., Fine and Coda.
+// meas[i] = {fwd, bwd, times, end:[pass numbers]|null, segno, coda, dc, ds, fine, tocoda}
+// Returns [{i, pass}] where pass is which time through the repeated section this bar is (1, 2, 3...).
+function playOrder(meas){
+  const out=[],N=meas.length,segno={},coda={};
+  meas.forEach((M,i)=>{if(M.segno)segno[M.segno]=i;if(M.coda)coda[M.coda]=i;});
+  const lastEnding=Math.max(0,...meas.filter(x=>x.end).flatMap(x=>x.end));
+  let i=0,start=0,pass=1,jumped=false,usedDC=false,dc=false,guard=0;
+  while(i<N&&guard++<20000){
+    const M=meas[i];
+    if(M.fwd&&!jumped){start=i;pass=1;}
+    if(!jumped&&!M.end&&i>0&&meas[i-1].end&&!M.fwd)pass=1;           // past the endings: back to verse-1 numbering
+    jumped=false;
+    if(M.end&&(dc?!M.end.includes(lastEnding):!M.end.includes(pass))){i++;continue;}   // not this time's ending
+    out.push({i,pass:dc?1:pass});
+    if(dc&&M.fine)break;
+    if(dc&&M.tocoda&&coda[M.tocoda]>i){i=coda[M.tocoda];jumped=true;continue;}
+    if(M.bwd&&!dc){
+      // how many times through: the "times" mark, else the highest ending number around here, else twice
+      let j=i;while(j+1<N&&meas[j+1].end)j++;
+      const ends=meas.slice(start,j+1).filter(x=>x.end).flatMap(x=>x.end),times=M.times||Math.max(2,...ends);
+      if(pass<times){pass++;i=start;jumped=true;continue;}
+      start=i+1;if(!(meas[i+1]&&meas[i+1].end))pass=1;
+    }
+    if((M.dc||M.ds)&&!usedDC){usedDC=true;dc=true;i=M.dc?0:(segno[M.ds]!=null?segno[M.ds]:0);jumped=true;continue;}
+    i++;
+  }
+  return out;
+}
 function parseMusicXml(text){
   const doc=new DOMParser().parseFromString(text,'application/xml');if(doc.getElementsByTagName('parsererror').length)throw Error('This file couldn\'t be read as MusicXML.');
   const root=doc.documentElement;
@@ -665,42 +694,80 @@ function parseMusicXml(text){
   const txt=(el,path)=>{let e=el;for(const n of path.split('/')){e=e&&kid(e,n);}return e?e.textContent.trim():'';};
   const title=txt(root,'work/work-title')||txt(root,'movement-title');
   const names={};const pl=kid(root,'part-list');if(pl)for(const sp of pl.children)if(sp.nodeName==='score-part')names[sp.getAttribute('id')]=txt(sp,'part-name')||'Part';
-  const PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};let tempo=0,flats=false,tsig=null,bars=null;const sources=[],lyr={},hm=[];let pi=0;
+  const PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};let tempo=0,flats=false,tsig=null;
+  const parts=[],meta=[],lens=[];
+  // ---- 1. read every bar on its own, with times measured from the start of the bar
+  let pi=0;
   for(const part of root.children){if(part.nodeName!=='part')continue;
-    let dv=1,cur=0,lastOn=0;const bySt={},open={},ms=[];
-    for(const meas of part.children){if(meas.nodeName!=='measure')continue;ms.push(cur);
+    let dv=1,mi=0;const P={id:part.getAttribute('id'),bars:[]};parts.push(P);
+    for(const meas of part.children){if(meas.nodeName!=='measure')continue;
+      const B={notes:[],lyrics:[],harm:[]};P.bars.push(B);
+      const md=meta[mi]||(meta[mi]={fwd:false,bwd:false,times:0,end:null,endStop:false,segno:'',coda:'',dc:false,ds:'',fine:false,tocoda:''});
+      let cur=0,lastOn=0,mx=0;
+      const snd=s=>{if(!s)return;const a=k=>s.getAttribute(k);
+        if(!tempo&&a('tempo'))tempo=Math.round(+a('tempo'));
+        if(a('dacapo')==='yes')md.dc=true;if(a('dalsegno'))md.ds=a('dalsegno');if(a('segno'))md.segno=a('segno');
+        if(a('coda'))md.coda=a('coda');if(a('tocoda'))md.tocoda=a('tocoda');if(a('fine')!=null)md.fine=true;};
       for(const el of meas.children){const n=el.nodeName;
         if(n==='attributes'){const d=txt(el,'divisions');if(d)dv=+d||1;const f=txt(el,'key/fifths');if(f!==''&&pi===0)flats=+f<0;if(!tsig){const b=txt(el,'time/beats'),bt=txt(el,'time/beat-type');if(b)tsig=[parseInt(b)||4,+bt||4];}}
         else if(n==='backup')cur-=(+txt(el,'duration')||0)/dv;
-        else if(n==='forward')cur+=(+txt(el,'duration')||0)/dv;
+        else if(n==='forward'){cur+=(+txt(el,'duration')||0)/dv;mx=Math.max(mx,cur);}
+        else if(n==='barline'){const rp=kid(el,'repeat'),en=kid(el,'ending');
+          if(rp&&rp.getAttribute('direction')==='forward')md.fwd=true;
+          if(rp&&rp.getAttribute('direction')==='backward'){md.bwd=true;md.times=Math.max(md.times,parseInt(rp.getAttribute('times'))||0);}
+          if(en&&en.getAttribute('type')==='start'){const nums=(en.getAttribute('number')||'1').split(/[,\s]+/).map(Number).filter(Boolean);md.end=nums.length?nums:[1];}
+          if(en&&/stop|discontinue/.test(en.getAttribute('type')||''))md.endStop=true;
+          const s=kid(el,'sound');snd(s);}
         else if(n==='harmony'){const rt=kid(el,'root'),kd=kid(el,'kind'),kv=kd?kd.textContent.trim():'major';
           if(rt&&kv!=='none'){const st=txt(rt,'root-step'),al=Math.round(+txt(rt,'root-alter')||0),K=KINDS[kv]||KINDS.major,kt=kd&&kd.getAttribute('text');
             const sfx=kt!=null&&kt!==''?kt:(KINDS[kv]?K[0]:''),bs=kid(el,'bass');let bpc=null,bn='';
             if(bs){const bst=txt(bs,'bass-step'),bal=Math.round(+txt(bs,'bass-alter')||0);bpc=(PCN[bst]+bal+12)%12;bn='/'+bst+(bal<0?'♭':bal>0?'♯':'');}
-            if(PCN[st]!=null)hm.push([Math.round((cur+(+txt(el,'offset')||0)/dv)*1000)/1000,st+(al<0?'♭':al>0?'♯':'')+sfx+bn,(PCN[st]+al+12)%12,K[1],bpc]);}}
-        else if(n==='direction'||n==='sound'){const snd=n==='sound'?el:kid(el,'sound');if(!tempo&&snd&&snd.getAttribute('tempo'))tempo=Math.round(+snd.getAttribute('tempo'));
+            if(PCN[st]!=null)B.harm.push([cur+(+txt(el,'offset')||0)/dv,st+(al<0?'♭':al>0?'♯':'')+sfx+bn,(PCN[st]+al+12)%12,K[1],bpc]);}}
+        else if(n==='direction'||n==='sound'){snd(n==='sound'?el:kid(el,'sound'));
           if(!tempo&&n==='direction'){const met=el.getElementsByTagName('metronome')[0];if(met){const pm=parseFloat(txt(met,'per-minute')),bu={whole:4,half:2,quarter:1,eighth:.5}[txt(met,'beat-unit')]||1;if(pm)tempo=Math.round(pm*bu*(kid(met,'beat-unit-dot')?1.5:1));}}}
         else if(n==='note'){
           if(kid(el,'grace')||kid(el,'cue'))continue;
-          const du=(+txt(el,'duration')||0)/dv,chord=!!kid(el,'chord'),on=chord?lastOn:cur;if(!chord){lastOn=cur;cur+=du;}
+          const du=(+txt(el,'duration')||0)/dv,chord=!!kid(el,'chord'),on=chord?lastOn:cur;if(!chord){lastOn=cur;cur+=du;mx=Math.max(mx,cur);}
           const pt=kid(el,'pitch');if(!pt)continue;
           if(!chord)[...el.children].filter(c=>c.nodeName==='lyric').forEach((ly,k)=>{
             const num=parseInt((ly.getAttribute('number')||'').replace(/\D/g,''))||k+1;
             const tx=[...ly.children].filter(c=>c.nodeName==='text').map(c=>c.textContent).join('‿').trim(),sy=txt(ly,'syllabic');
-            if(tx){const P=lyr[pi]=lyr[pi]||{};(P[num]=P[num]||[]).push([Math.round(on*1000)/1000,tx+(sy==='begin'||sy==='middle'?'-':'')]);}});
+            if(tx)B.lyrics.push([on,num,tx+(sy==='begin'||sy==='middle'?'-':'')]);});
           const m=(+txt(pt,'octave')+1)*12+PC[txt(pt,'step')]+Math.round(+txt(pt,'alter')||0);if(isNaN(m))continue;
-          const staff=+txt(el,'staff')||1,key=staff+':'+m,ties=[...el.children].filter(c=>c.nodeName==='tie').map(c=>c.getAttribute('type'));
-          if(ties.includes('stop')&&open[key]){open[key][1]+=du;if(!ties.includes('start'))delete open[key];continue;}
-          const ev=[on,du,m];(bySt[staff]=bySt[staff]||[]).push(ev);if(ties.includes('start'))open[key]=ev;}}}
-    if(!bars)bars=ms;
-    const sts=Object.keys(bySt).sort();
-    sts.forEach(st=>sources.push({label:(names[part.getAttribute('id')]||'Part '+(pi+1))+(sts.length>1?(st==='1'?' · upper staff':st==='2'?' · lower staff':' · staff '+st):''),part:pi,staff:+st,notes:bySt[st].sort((a,c)=>a[0]-c[0])}));
+          B.notes.push([on,du,m,+txt(el,'staff')||1,[...el.children].filter(c=>c.nodeName==='tie').map(c=>c.getAttribute('type'))]);}}
+      lens[mi]=Math.max(lens[mi]||0,mx);mi++;}
     pi++;}
-  // the part with the most words; its verses in order
-  const best=Object.values(lyr).sort((a,c)=>Object.values(c).flat().length-Object.values(a).flat().length)[0]||{};
-  const lyrics=Object.keys(best).map(Number).sort((a,c)=>a-c).map(k=>best[k]);
+  // an ending runs from its start bar to its stop bar
+  let curEnd=null;meta.forEach(M=>{if(M.end)curEnd=M.end;else if(curEnd)M.end=curEnd;if(M.endStop)curEnd=null;});
+  // ---- 2. the order the bars are played in
+  const order=playOrder(meta),repeats=order.length>meta.length||order.some((o,k)=>k&&o.i<=order[k-1].i);
+  const starts=[];let off=0;order.forEach(o=>{starts.push(off);off+=lens[o.i]||0;});
+  const r3=x=>Math.round(x*1000)/1000;
+  // ---- 3. lay out each part's notes in playing order, joining tied notes
+  const sources=[],lyr={};
+  parts.forEach((P,pi)=>{const bySt={},open={};const lyByNum={},lyMapped=[];
+    order.forEach((o,k)=>{const B=P.bars[o.i];if(!B)return;const base=starts[k];
+      for(const[on,du,m,staff,ties]of B.notes){const key=staff+':'+m;
+        if(ties.includes('stop')&&open[key]){open[key][1]+=du;if(!ties.includes('start'))delete open[key];continue;}
+        const ev=[r3(base+on),du,m];(bySt[staff]=bySt[staff]||[]).push(ev);if(ties.includes('start'))open[key]=ev;}
+      // words: with repeats, pass 2 sings verse 2 and so on; a line with only one verse is sung every time
+      const at={};B.lyrics.forEach(l=>{(at[l[0]]=at[l[0]]||[]).push(l);});
+      Object.keys(at).forEach(t=>{const L=at[t],pick=L.find(l=>l[1]===o.pass)||L.find(l=>l[1]===1)||L[0];
+        lyMapped.push([r3(base+(+t)),pick[2]]);
+        if(k===order.findIndex(x=>x.i===o.i))L.forEach(l=>{(lyByNum[l[1]]=lyByNum[l[1]]||[]).push([r3(base+(+t)),l[2]]);});});});
+    lyr[pi]={mapped:lyMapped.sort((a,c)=>a[0]-c[0]),byNum:lyByNum};
+    const sts=Object.keys(bySt).sort();
+    sts.forEach(st=>sources.push({label:(names[P.id]||'Part '+(pi+1))+(sts.length>1?(st==='1'?' · upper staff':st==='2'?' · lower staff':' · staff '+st):''),part:pi,staff:+st,notes:bySt[st].sort((a,c)=>a[0]-c[0])}));});
+  // the part with the most words
+  const bestP=Object.values(lyr).sort((a,c)=>c.mapped.length-a.mapped.length)[0];
+  let lyrics=[];
+  if(bestP&&bestP.mapped.length){
+    const nums=Object.keys(bestP.byNum).map(Number).sort((a,c)=>a-c);
+    // repeats decide which verse goes where; without repeats, stacked verses become a verse picker
+    lyrics=repeats||nums.length<2?[bestP.mapped]:nums.map(k=>bestP.byNum[k].sort((a,c)=>a[0]-c[0]));}
+  const hm=[];order.forEach((o,k)=>{const B=parts[0]&&parts[0].bars[o.i];parts.forEach(P=>{const b=P.bars[o.i];if(b)b.harm.forEach(h=>hm.push([r3(starts[k]+h[0]),h[1],h[2],h[3],h[4]]));});});
   hm.sort((a,c)=>a[0]-c[0]);const harmonies=hm.filter((x,i)=>!i||Math.abs(x[0]-hm[i-1][0])>0.01);
-  return{title,tempo:tempo||100,flats,tsig:tsig||[4,4],bars:bars||[],sources,lyrics,harmonies};
+  return{title,tempo:tempo||100,flats,tsig:tsig||[4,4],bars:starts.map(r3),sources,lyrics,harmonies,repeats:repeats?order.length:0};
 }
 async function unzipMxl(b){
   const dv=new DataView(b.buffer,b.byteOffset,b.byteLength);let e=-1;
