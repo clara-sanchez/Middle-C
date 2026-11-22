@@ -663,27 +663,29 @@ function playOrder(meas){
   const out=[],N=meas.length,segno={},coda={};
   meas.forEach((M,i)=>{if(M.segno)segno[M.segno]=i;if(M.coda)coda[M.coda]=i;});
   const lastEnding=Math.max(0,...meas.filter(x=>x.end).flatMap(x=>x.end));
-  let i=0,start=0,pass=1,jumped=false,usedDC=false,dc=false,guard=0;
-  while(i<N&&guard++<20000){
+  let i=0,start=0,pass=1,jumped=false,done=false,usedDC=false,dc=false;
+  while(i<N&&out.length<=8*N+50){
     const M=meas[i];
-    if(M.fwd&&!jumped){start=i;pass=1;}
-    if(!jumped&&!M.end&&i>0&&meas[i-1].end&&!M.fwd)pass=1;           // past the endings: back to verse-1 numbering
+    if(done&&!M.end&&!jumped){pass=1;done=false;}                       // left a finished repeat and its endings
+    if(M.end&&(dc?!M.end.includes(lastEnding):!M.end.includes(pass))){jumped=false;i++;continue;}   // not this time's ending
+    if(M.fwd&&!jumped&&!dc){start=i;pass=1;done=false;}                 // a new repeated section starts here
     jumped=false;
-    if(M.end&&(dc?!M.end.includes(lastEnding):!M.end.includes(pass))){i++;continue;}   // not this time's ending
     out.push({i,pass:dc?1:pass});
+    if(M.end&&!M.bwd&&!M.fwd)done=true;                                // the last ending: this repeat is finished
     if(dc&&M.fine)break;
     if(dc&&M.tocoda&&coda[M.tocoda]>i){i=coda[M.tocoda];jumped=true;continue;}
     if(M.bwd&&!dc){
-      // how many times through: the "times" mark, else the highest ending number around here, else twice
-      let j=i;while(j+1<N&&meas[j+1].end)j++;
       // how many times: the "times" mark, else the highest ending number, else one pass per line of words, else twice
-      const ends=meas.slice(start,j+1).filter(x=>x.end).flatMap(x=>x.end),times=M.times||Math.max(2,...ends,...meas.slice(start,j+1).map(x=>x.verses||0));
+      let j=i;while(j+1<N&&meas[j+1].end)j++;
+      const sec=meas.slice(start,j+1),times=M.times||Math.max(2,...sec.filter(x=>x.end).flatMap(x=>x.end),...sec.map(x=>x.verses||0));
       if(pass<times){pass++;i=start;jumped=true;continue;}
-      start=i+1;if(!(meas[i+1]&&meas[i+1].end))pass=1;
+      start=i+1;done=true;
     }
     if((M.dc||M.ds)&&!usedDC){usedDC=true;dc=true;i=M.dc?0:(segno[M.ds]!=null?segno[M.ds]:0);jumped=true;continue;}
     i++;
   }
+  // safety net: if the marks don't make sense, play every bar once rather than looping
+  if(out.length>8*N+50)return meas.map((_,k)=>({i:k,pass:1}));
   return out;
 }
 function parseMusicXml(text){
@@ -839,16 +841,18 @@ function saveImport(roles,title){
   $('#impDlg').hidden=true;pending=null;filt='mine';store.set('filt',filt);showTab('lesson');startSong(u.id);return u;}
 $('#impFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{pending=await readSongFile(f);}catch(err){pending=null;$('#impErr').textContent=err.message||String(err);$('#impErr').hidden=false;$('#impBody').hidden=true;$('#impDlg').hidden=false;return;}
-  const d=defaultRoles(pending.sources);
-  if(!d.sure){showRoles(d.roles);return;}
-  const roles=d.roles,u=saveImport(roles,pending.title);if(!u)return;
+  let d,u;
+  try{d=defaultRoles(pending.sources);if(!d.sure){showRoles(d.roles);return;}u=saveImport(d.roles,pending.title);}
+  catch(err){pending=null;$('#impErr').textContent='Something went wrong adding this song ('+(err.message||err)+'). Send the file to whoever helps you with the app.';$('#impErr').hidden=false;$('#impBody').hidden=true;$('#impDlg').hidden=false;return;}
+  if(!u)return;const roles=d.roles;
   const used=pending===null?u.srcs.map((l,i)=>({l,r:roles[i]})):[];
   const say={R:'right hand',L:'left hand',B:'played by the app',off:'left out'};
   showMsg(`Added “${u.title}”. `+used.map(x=>`${x.l}: ${say[x.r]}`).join(' · ')+'. Tap “Change parts” if that\'s not right.');
   clearTimeout(noteTimer);noteTimer=setTimeout(hideMsg,9000);});
 $('#impCancel').addEventListener('click',()=>{$('#impDlg').hidden=true;pending=null;});
 $('#impSave').addEventListener('click',()=>{if(!pending){$('#impDlg').hidden=true;return;}
-  saveImport([...$('#impRows').querySelectorAll('select')].map(s=>s.value),$('#impTitle').value.trim());});
+  try{saveImport([...$('#impRows').querySelectorAll('select')].map(s=>s.value),$('#impTitle').value.trim());}
+  catch(err){$('#impErr').textContent='Something went wrong adding this song ('+(err.message||err)+').';$('#impErr').hidden=false;}});
 $('#lsParts').addEventListener('click',()=>{const u=imports.find(x=>x.id===L.sg.id);if(!u||!u.srcs)return;
   const roles=u.srcs.map((_,i)=>{const x=u.ev.find(v=>v[4]===i);return x?x[3]:'off';});
   pending={editId:u.id,title:u.title,flats:u.flats,tempo:u.tempo,tsig:u.tsig,harmonies:u.hm||[],sources:u.srcs.map((label,i)=>({label,notes:u.ev.filter(v=>v[4]===i).map(v=>[v[0],v[1],v[2]])}))};
