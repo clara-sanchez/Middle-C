@@ -38,14 +38,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .meter{width:90px;height:8px;border-radius:4px;background:#2a2a30;overflow:hidden}
 .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3be37f,#f2c94c 70%,#ff5b5b);transition:width .06s}
 .msg{margin:12px max(4vw,16px) 0;padding:12px 16px;border-radius:12px;background:var(--feltSoft);color:var(--ink);font-size:15px}
-.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px max(4vw,16px) 0;max-width:1240px;margin:0 auto}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px max(4vw,16px) 0;max-width:1240px;margin:0 auto;position:relative;z-index:30}
 .tabs{display:flex;background:var(--line);border-radius:12px;padding:4px;gap:4px}
 .tabs button{border:0;background:none;min-height:40px;padding:0 16px;border-radius:9px;font-weight:600;color:var(--soft)}
 .tabs button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
 details.set{margin-left:auto;position:relative}
 details.set summary{list-style:none;min-height:44px;display:flex;align-items:center;padding:0 14px;border:1px solid var(--line);border-radius:12px;font-weight:600;cursor:pointer}
 details.set summary::-webkit-details-marker{display:none}
-.setp{position:absolute;right:0;top:52px;z-index:20;width:min(320px,90vw);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 12px 32px rgba(0,0,0,.18);display:grid;gap:14px}
+.setp{position:absolute;right:0;top:52px;z-index:50;width:min(320px,90vw);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 12px 32px rgba(0,0,0,.18);display:grid;gap:14px}
 .setp label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px}
 .setp small{color:var(--soft);display:block;font-size:13px}
 input[type=checkbox]{width:22px;height:22px;accent-color:var(--felt)}
@@ -83,7 +83,7 @@ main{max-width:1240px;margin:0 auto;padding:14px max(4vw,16px)}
 .nt ellipse,.nt .acc,.nt .dotn{stroke:none}
 .nt ellipse.open{fill:none;stroke:inherit;stroke-width:1.9}
 .nt .flag{fill:none;stroke-width:1.6}
-.bar{stroke:currentColor;stroke-width:1.3;opacity:.7}
+.barl{stroke:currentColor;stroke-width:1.3;opacity:.7}
 .tsig{font:700 1em Georgia,serif;fill:currentColor;dominant-baseline:central;text-anchor:middle}
 .nt.done{opacity:.3}
 .nt.current{fill:var(--felt);stroke:var(--felt)}
@@ -485,8 +485,8 @@ function drawStaff(svg){
   const cx0=D.opts.center?(x0+W)/2-(vis.length-1)*sp/2:xs+sp*0.6;
   vis.forEach((n,i)=>{
     const gi=start+i,cx=cx0+i*sp;
-    if(rhy&&i>0){const p=notes[gi-1].on,c=n.on;if(bars.some(b=>b>p+1e-6&&b<=c+1e-6)){const bx=cx-sp/2;s+=`<line class="bar" x1="${bx}" x2="${bx}" y1="${y(38)}" y2="${y(18)}"/>`;}}
-    if(rhy&&gi===notes.length-1){const bx=Math.min(W-8,cx+sp*0.6);s+=`<line class="bar" x1="${bx-5}" x2="${bx-5}" y1="${y(38)}" y2="${y(18)}"/><line class="bar" x1="${bx}" x2="${bx}" y1="${y(38)}" y2="${y(18)}" style="stroke-width:3.5"/>`;}
+    if(rhy&&i>0){const p=notes[gi-1].on,c=n.on;if(bars.some(b=>b>p+1e-6&&b<=c+1e-6)){const bx=cx-sp/2;s+=`<line class="barl" x1="${bx}" x2="${bx}" y1="${y(38)}" y2="${y(18)}"/>`;}}
+    if(rhy&&gi===notes.length-1){const bx=Math.min(W-8,cx+sp*0.6);s+=`<line class="barl" x1="${bx-5}" x2="${bx-5}" y1="${y(38)}" y2="${y(18)}"/><line class="barl" x1="${bx}" x2="${bx}" y1="${y(38)}" y2="${y(18)}" style="stroke-width:3.5"/>`;}
     s+=`<g class="nt ${n.s||'todo'}">`;
     (n.groups||[{ms:n.ms||[n.m],dur:n.dur}]).forEach(G=>{const sh=shape(G.dur),rx=step*(sh.k==='w'?1.45:1.28);
     const heads=G.ms.map(m=>({m,d:dOf(m,fl),acc:spell(m,fl).acc})).sort((a,b)=>a.d-b.d);
