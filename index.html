@@ -676,7 +676,8 @@ function playOrder(meas){
     if(M.bwd&&!dc){
       // how many times through: the "times" mark, else the highest ending number around here, else twice
       let j=i;while(j+1<N&&meas[j+1].end)j++;
-      const ends=meas.slice(start,j+1).filter(x=>x.end).flatMap(x=>x.end),times=M.times||Math.max(2,...ends);
+      // how many times: the "times" mark, else the highest ending number, else one pass per line of words, else twice
+      const ends=meas.slice(start,j+1).filter(x=>x.end).flatMap(x=>x.end),times=M.times||Math.max(2,...ends,...meas.slice(start,j+1).map(x=>x.verses||0));
       if(pass<times){pass++;i=start;jumped=true;continue;}
       start=i+1;if(!(meas[i+1]&&meas[i+1].end))pass=1;
     }
@@ -702,7 +703,7 @@ function parseMusicXml(text){
     let dv=1,mi=0;const P={id:part.getAttribute('id'),bars:[]};parts.push(P);
     for(const meas of part.children){if(meas.nodeName!=='measure')continue;
       const B={notes:[],lyrics:[],harm:[]};P.bars.push(B);
-      const md=meta[mi]||(meta[mi]={fwd:false,bwd:false,times:0,end:null,endStop:false,segno:'',coda:'',dc:false,ds:'',fine:false,tocoda:''});
+      const md=meta[mi]||(meta[mi]={verses:0,fwd:false,bwd:false,times:0,end:null,endStop:false,segno:'',coda:'',dc:false,ds:'',fine:false,tocoda:''});
       let cur=0,lastOn=0,mx=0;
       const snd=s=>{if(!s)return;const a=k=>s.getAttribute(k);
         if(!tempo&&a('tempo'))tempo=Math.round(+a('tempo'));
@@ -732,7 +733,7 @@ function parseMusicXml(text){
           if(!chord)[...el.children].filter(c=>c.nodeName==='lyric').forEach((ly,k)=>{
             const num=parseInt((ly.getAttribute('number')||'').replace(/\D/g,''))||k+1;
             const tx=[...ly.children].filter(c=>c.nodeName==='text').map(c=>c.textContent).join('‿').trim(),sy=txt(ly,'syllabic');
-            if(tx)B.lyrics.push([on,num,tx+(sy==='begin'||sy==='middle'?'-':'')]);});
+            if(tx){B.lyrics.push([on,num,tx+(sy==='begin'||sy==='middle'?'-':'')]);md.verses=Math.max(md.verses,num);}});
           const m=(+txt(pt,'octave')+1)*12+PC[txt(pt,'step')]+Math.round(+txt(pt,'alter')||0);if(isNaN(m))continue;
           B.notes.push([on,du,m,+txt(el,'staff')||1,[...el.children].filter(c=>c.nodeName==='tie').map(c=>c.getAttribute('type'))]);}}
       lens[mi]=Math.max(lens[mi]||0,mx);mi++;}
@@ -740,7 +741,10 @@ function parseMusicXml(text){
   // an ending runs from its start bar to its stop bar
   let curEnd=null;meta.forEach(M=>{if(M.end)curEnd=M.end;else if(curEnd)M.end=curEnd;if(M.endStop)curEnd=null;});
   // ---- 2. the order the bars are played in
-  const order=playOrder(meta),repeats=order.length>meta.length||order.some((o,k)=>k&&o.i<=order[k-1].i);
+  let order=playOrder(meta),repeats=order.length>meta.length||order.some((o,k)=>k&&o.i<=order[k-1].i);
+  // stacked verses with no repeat signs: play the whole song once per verse (verse 1, then 2, ...)
+  const nVerses=Math.max(0,...parts.flatMap(P=>P.bars.flatMap(B=>B.lyrics.map(l=>l[1]))));
+  if(!repeats&&nVerses>1&&nVerses<=12){order=[];for(let k=1;k<=nVerses;k++)meta.forEach((_,i)=>order.push({i,pass:k}));repeats=true;}
   const starts=[];let off=0;order.forEach(o=>{starts.push(off);off+=lens[o.i]||0;});
   const r3=x=>Math.round(x*1000)/1000;
   // ---- 3. lay out each part's notes in playing order, joining tied notes
@@ -751,9 +755,11 @@ function parseMusicXml(text){
         if(ties.includes('stop')&&open[key]){open[key][1]+=du;if(!ties.includes('start'))delete open[key];continue;}
         const ev=[r3(base+on),du,m];(bySt[staff]=bySt[staff]||[]).push(ev);if(ties.includes('start'))open[key]=ev;}
       // words: with repeats, pass 2 sings verse 2 and so on; a line with only one verse is sung every time
+      // in a bar that has words for this verse, use only that verse's line; otherwise (e.g. a chorus) line 1
+      const line=B.lyrics.some(l=>l[1]===o.pass)?o.pass:B.lyrics.some(l=>l[1]===1)?1:Math.min(...B.lyrics.map(l=>l[1]));
+      B.lyrics.filter(l=>l[1]===line).forEach(l=>lyMapped.push([r3(base+l[0]),l[2]]));
       const at={};B.lyrics.forEach(l=>{(at[l[0]]=at[l[0]]||[]).push(l);});
-      Object.keys(at).forEach(t=>{const L=at[t],pick=L.find(l=>l[1]===o.pass)||L.find(l=>l[1]===1)||L[0];
-        lyMapped.push([r3(base+(+t)),pick[2]]);
+      Object.keys(at).forEach(t=>{const L=at[t];
         if(k===order.findIndex(x=>x.i===o.i))L.forEach(l=>{(lyByNum[l[1]]=lyByNum[l[1]]||[]).push([r3(base+(+t)),l[2]]);});});});
     lyr[pi]={mapped:lyMapped.sort((a,c)=>a[0]-c[0]),byNum:lyByNum};
     const sts=Object.keys(bySt).sort();
